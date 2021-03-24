@@ -1,0 +1,28 @@
+{
+  "name": "@klaudhaus/lit-router",
+  "version": "0.0.1",
+  "description": "",
+  "type": "module",
+  "main": "bin/lit-router.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "install": "tsc"
+  },
+  "types": "types/lit-router.d.ts",
+  "author": "tstewart@klaudhaus.com",
+  "license": "MIT",
+  "dependencies": {
+    "lit-app": "^1.1.6",
+    "path-to-regexp": "^6.2.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "eslint": "^7.10.0",
+    "eslint-config-standard-with-typescript": "^19.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "typescript": "^4.1.4"
+  }
+}
