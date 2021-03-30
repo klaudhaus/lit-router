@@ -1,6 +1,6 @@
 {
   "name": "@klaudhaus/lit-router",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "",
   "type": "module",
   "main": "bin/lit-router.js",
@@ -12,7 +12,6 @@
   "author": "tstewart@klaudhaus.com",
   "license": "MIT",
   "dependencies": {
-    "lit-app": "^1.1.6",
     "path-to-regexp": "^6.2.0"
   },
   "devDependencies": {

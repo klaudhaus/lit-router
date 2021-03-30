@@ -1,10 +1,9 @@
 import { match, compile, MatchFunction, PathFunction } from "path-to-regexp"
-import { up } from "lit-app"
 
-export type RouteMap = Map<string, ((obj: any) => any)>
-
-type RouteHandler<T> = (routeParams: T) => any
-type RouteGoer<T> = (params: T) => void
+export type GoParamsGetter<T> = ((data: any) => T)
+export type GoParams<T> = T | GoParamsGetter<T>
+export type RouteGoer<T> = (params: GoParams<T>) => void
+export type RouteHandler<T> = (routeParams: T) => any
 
 // Functions associated with a particular route pattern and parameters structure
 export type Route<T extends object> = {
@@ -13,6 +12,7 @@ export type Route<T extends object> = {
   match: MatchFunction<T>
   make: PathFunction<T>
   go: RouteGoer<T>
+  router?: LitRouter
 }
 
 export function route<T extends object> (pattern: string, on?: RouteHandler<T>): Route<T> {
@@ -21,7 +21,10 @@ export function route<T extends object> (pattern: string, on?: RouteHandler<T>):
     on,
     match: match(pattern.toString(), { decode: decodeURIComponent }),
     make: compile(pattern.toString()),
-    go: function (params: T) {
+    go: function (params: GoParams<T>) {
+      if (typeof params === "function") {
+        params = (<GoParamsGetter<T>>params)(this.router.data)
+      }
       history.pushState(null, null, this.make(params))
       window.dispatchEvent(new PopStateEvent("popstate"))
     }
@@ -44,36 +47,37 @@ export class LitRouter {
 
   routes: Array<Route<object>>
 
-  constructor (routes: Array<Route<object>>) {
-    this.routes = routes
-  }
+  data: any
 
-  onPathChange (path: string) {
-    console.log(`Path change: ${path}`)
-    for (const { on, match } of this.routes) {
-      const urlMatch = match(path)
-      if (urlMatch) {
-        on(urlMatch.params)
-        break
+  onPathChange: () => void
+
+  constructor (routes: Array<Route<object>>, data?: any, onHandled?: (...params: any[]) => any) {
+    routes.forEach(route => route.router = this)
+
+    this.data = data
+
+    this.onPathChange = () => {
+      const path = location.pathname
+      for (const { on, match } of routes) {
+        const urlMatch = match(path)
+        if (urlMatch) {
+          on(urlMatch.params)
+          if (onHandled) onHandled()
+          return
+        }
       }
+      console.warn(`Unrecognised route: ${path}`)
     }
   }
 
-  wrappedHandler () {
-    this.onPathChange(location.pathname)
-    up(() => {})()
-  }
-
   start () {
-    console.log("Starting router")
-    this.onPathChange(location.pathname)
-    console.log("adding event listener")
-    window.addEventListener("popstate", this.wrappedHandler.bind(this))
+    this.onPathChange()
+    window.addEventListener("popstate", this.onPathChange)
     return this // Allow chained `const router = new LitRouter(routes).start()`
   }
 
   stop () {
-    window.removeEventListener("popstate", this.wrappedHandler)
+    window.removeEventListener("popstate", this.onPathChange)
     return this // For consistency with start()
   }
 }
