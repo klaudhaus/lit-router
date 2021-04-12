@@ -56,12 +56,12 @@ export class LitRouter {
 
     this.data = data
 
-    this.onPathChange = () => {
+    this.onPathChange = async () => {
       const path = location.pathname
       for (const { on, match } of routes) {
         const urlMatch = match(path)
         if (urlMatch) {
-          on(urlMatch.params)
+          await on(urlMatch.params)
           if (onHandled) onHandled()
           return
         }
