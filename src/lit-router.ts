@@ -1,7 +1,7 @@
 import { match, compile, MatchFunction, PathFunction } from "path-to-regexp"
 
 export type ParamsGetter<T> = ((data: any) => T)
-export type RouteGoer<P, Q = any> = (pathParams: P | ParamsGetter<P>, queryParams: Q | ParamsGetter<Q>) => void
+export type RouteGoer<P, Q = any> = (pathParams: P | ParamsGetter<P>, queryParams?: Q | ParamsGetter<Q>) => void
 export type RouteHandler<P, Q = any> = (routeParams: P, queryParams?: Q) => any
 
 /**
