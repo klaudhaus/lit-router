@@ -1,9 +1,9 @@
 {
   "name": "@klaudhaus/lit-router",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "type": "module",
-  "main": "bin/lit-router.js",
+  "main": "lib/lit-router.js",
   "scripts": {
     "dev": "tsc --watch",
     "install": "tsc"
