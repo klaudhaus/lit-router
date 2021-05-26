@@ -5,16 +5,21 @@ export type GoParams<T> = T | GoParamsGetter<T>
 export type RouteGoer<T> = (params: GoParams<T>) => void
 export type RouteHandler<T> = (routeParams: T) => any
 
-// Functions associated with a particular route pattern and parameters structure
+/**
+ * An object related to a given route pattern, with its associated functions.
+ */
 export type Route<T extends object> = {
   pattern: string
   on?: RouteHandler<T> // Optionally initialised on creation or added later
-  match: MatchFunction<T>
-  make: PathFunction<T>
-  go: RouteGoer<T>
+  match: MatchFunction<T> // Matcher for the route's given pattern
+  make: PathFunction<T> // Function to construct a route of the given pattern
+  go: RouteGoer<T> // Function to go to the given route
   router?: LitRouter
 }
 
+/**
+ * Create a route for the given pattern, optionally with a given route handler.
+ */
 export function route<T extends object> (pattern: string, on?: RouteHandler<T>): Route<T> {
   return {
     pattern,
@@ -29,18 +34,6 @@ export function route<T extends object> (pattern: string, on?: RouteHandler<T>):
       window.dispatchEvent(new PopStateEvent("popstate"))
     }
   }
-}
-
-export function routeMatchers (patterns: object) {
-  const matchers: any = {}
-  for (const pattern of Object.values(patterns)) {
-    matchers[pattern] = route(pattern)
-  }
-  return matchers
-}
-
-export function setRoute (path: string) {
-  history.pushState(null, null, path)
 }
 
 export class LitRouter {
@@ -80,4 +73,19 @@ export class LitRouter {
     window.removeEventListener("popstate", this.onPathChange)
     return this // For consistency with start()
   }
+}
+
+/**
+ * URL query parameters are best dealt with separately from route patterns, as they should be valid in any order.
+ * Instead, get them (within route `on` handling) and set them with these functions.
+ */
+
+export function getQueryParam (name: string) {
+  return new URLSearchParams(location.search).get(name)
+}
+
+export function setQueryParam (name: string, value: string) {
+  const params = new URLSearchParams(location.search)
+  params.set(name, value)
+  history.pushState(null, null, `${location.pathname}?${params}`)
 }

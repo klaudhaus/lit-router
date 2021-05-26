@@ -1,6 +1,6 @@
 {
   "name": "@klaudhaus/lit-router",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "type": "module",
   "main": "bin/lit-router.js",
@@ -8,7 +8,7 @@
     "dev": "tsc --watch",
     "install": "tsc"
   },
-  "types": "types/lit-router.d.ts",
+  "types": "lib/lit-router.d.ts",
   "author": "tstewart@klaudhaus.com",
   "license": "MIT",
   "dependencies": {
